@@ -1,2 +1,8 @@
 server:
   port: "8001"
+spring:
+  cloud:
+    consul:
+      discovery:
+        instanceId: ms-service-a
+        health-check-interval: 5s
