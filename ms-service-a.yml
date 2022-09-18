@@ -6,3 +6,6 @@ spring:
       discovery:
         instanceId: ms-service-a
         health-check-interval: 5s
+service:
+  b:
+    url: http://ms-service-b/service/b
