@@ -10,47 +10,22 @@ service:
   b:
     url: http://ms-service-b/service/b
 
-management:
-  health:
-    circuitbreakers:
-      enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: health
-  endpoint:
-    health:
-      show-details: always
-
-resilience4j:
-  circuitbreaker:
+resilience4j.circuitbreaker:
+configs:
+  default:
+    registerHealthIndicator: true
+    # Failure rate threshold percentage
+    failureRateThreshold: 2
+    # Minimum number of call attempts before rate threshold percentage is checked.
+    ringBufferSizeInClosedState: 10
+    # How long to wait until switching to half open.
+    waitDurationInOpenState: 1s
+    # Number of successful requests before moving back to closed from half open.
+    ringBufferSizeInHalfOpenState: 1
+    # Exceptions that do not count towards opening the circuit.
+    ignoreExceptions:
+      # Ignore 4xx exceptions.
+      - org.springframework.web.client.HttpClientErrorException
     instances:
       aInformation:
-        registerHealthIndicator: true
-        eventConsumerBufferSize: 10
-        failureRateThreshold: 50
-        minimumNumberOfCalls: 5
-        automaticTransitionFromOpenToHalfOpenEnabled: true
-        waitDurationInOpenState: 5s
-        permittedNumberOfCallsInHalfOpenState: 3
-        slidingWindowSize: 10
-        slidingWindowType: COUNT_BASED
-        recordExceptions:
-          - org.springframework.web.client.HttpServerErrorException
-          - java.io.IOException
-          - org.springframework.web.client.ResourceAccessException
-        ignoreExceptions:
-          - com.jb.msservicea.exceptions.CustomException
-  retry:
-    instances:
-      aInformation:
-        registerHealthIndicator: true
-        maxRetryAttempts: 5
-        waitDuration: 10s
-  ratelimiter:
-    instances:
-      aInformation:
-        registerHealthIndicator: false
-        limitForPeriod: 10
-        limitRefresheriod: 10s
-        timeoutDuration: 3s
+        baseConfig: default
